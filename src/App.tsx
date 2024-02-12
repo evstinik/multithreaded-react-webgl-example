@@ -1,11 +1,10 @@
 import { Canvas } from '@react-three/offscreen'
-import { lazy } from 'react'
 import RenderWorker from './renderWorker?worker'
-import { Leva, useControls } from 'leva'
+import { Leva, folder, useControls } from 'leva'
 import { useSnapshot } from 'valtio'
 import { store, syncStore } from './store'
+import { useEffect } from 'react'
 
-const Scene = lazy(() => import('./Scene'))
 const renderWorker = new RenderWorker()
 
 syncStore()
@@ -13,17 +12,26 @@ syncStore()
 function App() {
   const snap = useSnapshot(store)
 
-  useControls({
+  const [_, set] = useControls(() => ({
+    Instructions: folder({
+      'Test case 1': { value: 'Edit name in inspector', editable: false },
+      'Test case 2': { value: 'Click on object', editable: false }
+    }),
     name: { value: snap.name, onChange: (v) => (store.name = v) },
     color: { value: snap.color, onChange: (v) => (store.color = v) }
-  })
+  }))
+
+  // Update leva, it does not use outer sources automatically
+  useEffect(() => {
+    set(snap)
+  }, [snap])
 
   return (
     <div className='w-screen h-screen flex flex-row'>
       <Canvas
         className='w-full h-full flex-1'
         worker={renderWorker}
-        fallback={<Scene />}
+        fallback={null}
         camera={{ position: [2, 3, 4] }}
       />
 

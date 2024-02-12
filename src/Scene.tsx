@@ -1,4 +1,4 @@
-import { OrbitControls, Stage, Grid, Center, useGLTF, Text } from '@react-three/drei'
+import { OrbitControls, Stage, Grid, Center, useGLTF, Text3D } from '@react-three/drei'
 import { FC, Suspense } from 'react'
 import { MeshProps } from '@react-three/fiber'
 import { Mesh } from 'three'
@@ -6,6 +6,13 @@ import { store } from './store'
 import { useSnapshot } from 'valtio'
 
 import suzi from './assets/suzi.glb'
+
+const invertColor = () => {
+  store.color = `#${Number(0xffffff - Number.parseInt(store.color.slice(1), 16))
+    .toString(16)
+    .padStart(6, '0')}`
+  store.name = `Inverted ${store.name}`
+}
 
 const Scene = () => {
   const snap = useSnapshot(store)
@@ -20,22 +27,29 @@ const Scene = () => {
           environment={'city'}
         >
           <Suspense>
-            <Suzi receiveShadow castShadow rotation={[-0.63, 0, 0]} color={snap.color} />
+            <Suzi
+              receiveShadow
+              castShadow
+              rotation={[-0.63, 0, 0]}
+              color={snap.color}
+              onClick={invertColor}
+            />
           </Suspense>
         </Stage>
       </Center>
 
       <Suspense>
-        <Text
-          color='white'
-          anchorX='center'
-          anchorY='middle'
-          rotation={[-Math.PI * 0.5, 0, 0]}
-          position={[0, 0, 1.05]}
-          fontSize={0.5}
-        >
-          {snap.name}
-        </Text>
+        <Center position={[0, 0, 1.05]} cacheKey={snap.name}>
+          <Text3D
+            font='/inter_bold.json'
+            rotation={[-Math.PI * 0.5, 0, 0]}
+            size={0.5}
+            height={0.05}
+          >
+            <meshStandardMaterial color='white' />
+            {snap.name}
+          </Text3D>
+        </Center>
       </Suspense>
 
       <Grid
