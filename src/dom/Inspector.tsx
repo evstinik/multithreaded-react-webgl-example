@@ -33,7 +33,7 @@ export const Inspector: FC<InspectorProps> = (props) => {
 
   return (
     <div className='absolute inset-4 flex items-center justify-end pointer-events-none'>
-      <div className='min-w-32 max-w-64 pointer-events-auto'>
+      <div className='min-w-32 max-w-48 pointer-events-auto'>
         <Leva
           fill
           titleBar={{
